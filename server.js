@@ -29,16 +29,6 @@ const Content = mongoose.model('Content', contentSchema);
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/')));
 
-// Serve index.html as the home page
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Serve admin.html explicitly
-app.get('/admin.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin.html'));
-});
-
 // Initialize DB with data.json if empty
 async function initializeDB() {
     try {
