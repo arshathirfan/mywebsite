@@ -79,7 +79,7 @@
         async function fetchData() {
             try {
                 // Add timestamp to prevent caching
-                const res = await fetch('data.json?t=' + Date.now());
+                const res = await fetch('/api/data?t=' + Date.now());
                 currentData = await res.json();
                 renderAdmin();
                 document.getElementById('login-overlay').style.display = 'none';
