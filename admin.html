@@ -68,7 +68,7 @@
     </main>
 
     <script>
-        let currentData = { projects: [], blog: [] };
+        let currentData = { projects: [], blog: [], skills: [], achievements: [], certifications: [] };
         let adminPass = '';
 
         function login() {
@@ -80,8 +80,13 @@
             try {
                 // Add timestamp to prevent caching
                 const res = await fetch('/api/data?t=' + Date.now());
+                const data = await res.json();
 
-                currentData = await res.json();
+                if (!res.ok || data.success === false) {
+                    throw new Error(data.message || 'Failed to fetch data from the server');
+                }
+
+                currentData = data;
                 renderAdmin();
                 document.getElementById('login-overlay').style.display = 'none';
                 document.getElementById('admin-content').style.display = 'block';

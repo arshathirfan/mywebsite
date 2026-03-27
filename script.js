@@ -143,9 +143,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/api/data?t=' + Date.now());
             const data = await response.json();
 
+            if (!response.ok || data.success === false) {
+                console.error('API Error:', data.message);
+                return; // Stop rendering if there's an error
+            }
+
             // Render Projects
             const projectsContainer = document.getElementById('projects-container');
-            if (projectsContainer) {
+            if (projectsContainer && data.projects) {
                 projectsContainer.innerHTML = data.projects.map(project => `
                     <div class="card project-card">
                         <div class="project-placeholder" style="background: rgba(255,255,255,0.1); padding: 2rem; border-radius: 12px; text-align: center; margin-bottom: 1.5rem; font-weight: 700;">${project.placeholder}</div>
@@ -158,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Render Blog
             const blogContainer = document.getElementById('blog-container');
-            if (blogContainer) {
+            if (blogContainer && data.blog) {
                 blogContainer.innerHTML = data.blog.map(post => `
                     <div class="card">
                         <h3>${post.title}</h3>
@@ -170,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Render Skills
             const skillsContainer = document.getElementById('skills-container');
-            if (skillsContainer) {
+            if (skillsContainer && data.skills) {
                 const skillsHtml = data.skills.map(skill => `
                     <div class="skill-group" style="margin-bottom: 1.5rem;">
                         <label>${skill.name}</label>
@@ -182,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Render Achievements
             const achievementsContainer = document.getElementById('achievements-container');
-            if (achievementsContainer) {
+            if (achievementsContainer && data.achievements) {
                 achievementsContainer.innerHTML = data.achievements.map(ach => `
                     <div class="card achievement-card">
                         <div class="icon" style="font-size: 2rem; margin-bottom: 1rem;">${ach.icon}</div>
@@ -195,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Render Certifications
             const certsContainer = document.getElementById('certs-container');
-            if (certsContainer) {
+            if (certsContainer && data.certifications) {
                 certsContainer.innerHTML = data.certifications.map(cert => `
                     <div class="card cert-card">
                         <h3>${cert.title}</h3>
