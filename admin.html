@@ -86,7 +86,8 @@
                 document.getElementById('login-overlay').style.display = 'none';
                 document.getElementById('admin-content').style.display = 'block';
             } catch (err) {
-                alert('Error loading data. Make sure the server is running!');
+                console.error('Fetch error:', err);
+                alert('Connection Error: ' + err.message + '\n\nPlease check if your MONGODB_URI is correct in Vercel settings.');
             }
         }
 
