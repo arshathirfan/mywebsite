@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Arshad Irfan</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-section { padding: 2rem; max-width: 800px; margin: auto; }
+        .admin-card { background: var(--glass-bg); padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem; border: 1px solid var(--glass-border); }
+        .admin-controls { display: flex; gap: 10px; margin-bottom: 2rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; }
+        .btn-delete { background: #ff4757; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; }
+        .btn-add { background: var(--accent-color); color: black; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; cursor: pointer; margin-top: 1rem; }
+        .btn-save { background: #2ed573; color: white; border: none; padding: 1rem 2rem; border-radius: 8px; cursor: pointer; display: block; width: 100%; margin-top: 2rem; font-weight: bold; }
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-gradient); display: flex; align-items: center; justify-content: center; z-index: 3000; }
+        .login-card { padding: 3rem; text-align: center; }
+    </style>
+</head>
+<body class="light-theme">
+    <div id="login-overlay">
+        <div class="card login-card">
+            <h2>Admin Login</h2>
+            <div class="form-group" style="margin-top: 1.5rem;">
+                <input type="password" id="admin-pass" placeholder="Enter Password">
+            </div>
+            <button onclick="login()" class="btn primary-btn">Login</button>
+        </div>
+    </div>
+
+    <main class="admin-section" id="admin-content" style="display: none;">
+        <h1 class="section-title">Admin Dashboard</h1>
+        
+        <section>
+            <h2>Manage Projects</h2>
+            <div id="admin-projects"></div>
+            <button onclick="addProject()" class="btn-add">+ Add Project</button>
+        </section>
+
+        <section style="margin-top: 3rem;">
+            <h2>Manage Blog Posts</h2>
+            <div id="admin-blog"></div>
+            <button onclick="addBlogPost()" class="btn-add">+ Add Blog Post</button>
+        </section>
+
+        <section style="margin-top: 3rem;">
+            <h2>Manage Skills</h2>
+            <div id="admin-skills"></div>
+            <button onclick="addSkill()" class="btn-add">+ Add Skill</button>
+        </section>
+
+        <section style="margin-top: 3rem;">
+            <h2>Manage Achievements</h2>
+            <div id="admin-achievements"></div>
+            <button onclick="addAchievement()" class="btn-add">+ Add Achievement</button>
+        </section>
+
+        <section style="margin-top: 3rem;">
+            <h2>Manage Certifications</h2>
+            <div id="admin-certs"></div>
+            <button onclick="addCert()" class="btn-add">+ Add Certification</button>
+        </section>
+
+        <button onclick="saveAll()" class="btn-save">Save All Changes</button>
+        <p id="status-msg" style="text-align: center; margin-top: 1rem;"></p>
+        <a href="index.html" style="display: block; text-align: center; margin-top: 1rem; color: var(--text-secondary);">Back to Website</a>
+    </main>
+
+    <script>
+        let currentData = { projects: [], blog: [] };
+        let adminPass = '';
+
+        function login() {
+            adminPass = document.getElementById('admin-pass').value;
+            fetchData();
+        }
+
+        async function fetchData() {
+            try {
+                // Add timestamp to prevent caching
+                const res = await fetch('data.json?t=' + Date.now());
+                currentData = await res.json();
+                renderAdmin();
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('admin-content').style.display = 'block';
+            } catch (err) {
+                alert('Error loading data. Make sure the server is running!');
+            }
+        }
+
+        function renderAdmin() {
+            const projectsDiv = document.getElementById('admin-projects');
+            projectsDiv.innerHTML = currentData.projects.map((p, i) => `
+                <div class="admin-card">
+                    <div class="form-group"><input type="text" value="${p.title}" onchange="updateProject(${i}, 'title', this.value)" placeholder="Title"></div>
+                    <div class="form-group"><textarea onchange="updateProject(${i}, 'description', this.value)" placeholder="Description">${p.description}</textarea></div>
+                    <div class="form-group"><input type="text" value="${p.techStack}" onchange="updateProject(${i}, 'techStack', this.value)" placeholder="Tech Stack"></div>
+                    <div class="form-group"><input type="text" value="${p.placeholder}" onchange="updateProject(${i}, 'placeholder', this.value)" placeholder="Icon/Label"></div>
+                    <button onclick="deleteProject(${i})" class="btn-delete">Delete</button>
+                </div>
+            `).join('');
+
+            const blogDiv = document.getElementById('admin-blog');
+            blogDiv.innerHTML = currentData.blog.map((b, i) => `
+                <div class="admin-card">
+                    <div class="form-group"><input type="text" value="${b.title}" onchange="updateBlog(${i}, 'title', this.value)" placeholder="Title"></div>
+                    <div class="form-group"><input type="text" value="${b.date}" onchange="updateBlog(${i}, 'date', this.value)" placeholder="Date"></div>
+                    <div class="form-group"><textarea onchange="updateBlog(${i}, 'content', this.value)" placeholder="Content">${b.content}</textarea></div>
+                    <button onclick="deleteBlog(${i})" class="btn-delete">Delete</button>
+                </div>
+            `).join('');
+
+            const skillsDiv = document.getElementById('admin-skills');
+            skillsDiv.innerHTML = currentData.skills.map((s, i) => `
+                <div class="admin-card">
+                    <div class="form-group"><input type="text" value="${s.name}" onchange="updateSkill(${i}, 'name', this.value)" placeholder="Skill Name"></div>
+                    <div class="form-group"><input type="number" value="${s.level}" onchange="updateSkill(${i}, 'level', this.value)" placeholder="Level (0-100)"></div>
+                    <button onclick="deleteSkill(${i})" class="btn-delete">Delete</button>
+                </div>
+            `).join('');
+
+            const achDiv = document.getElementById('admin-achievements');
+            achDiv.innerHTML = currentData.achievements.map((a, i) => `
+                <div class="admin-card">
+                    <div class="form-group"><input type="text" value="${a.title}" onchange="updateAchievement(${i}, 'title', this.value)" placeholder="Title"></div>
+                    <div class="form-group"><input type="text" value="${a.description}" onchange="updateAchievement(${i}, 'description', this.value)" placeholder="Description"></div>
+                    <div class="form-group"><input type="text" value="${a.date}" onchange="updateAchievement(${i}, 'date', this.value)" placeholder="Date"></div>
+                    <div class="form-group"><input type="text" value="${a.icon}" onchange="updateAchievement(${i}, 'icon', this.value)" placeholder="Icon (Emoji)"></div>
+                    <button onclick="deleteAchievement(${i})" class="btn-delete">Delete</button>
+                </div>
+            `).join('');
+
+            const certsDiv = document.getElementById('admin-certs');
+            certsDiv.innerHTML = currentData.certifications.map((c, i) => `
+                <div class="admin-card">
+                    <div class="form-group"><input type="text" value="${c.title}" onchange="updateCert(${i}, 'title', this.value)" placeholder="Title"></div>
+                    <div class="form-group"><input type="text" value="${c.description}" onchange="updateCert(${i}, 'description', this.value)" placeholder="Description"></div>
+                    <button onclick="deleteCert(${i})" class="btn-delete">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function updateProject(i, field, val) { currentData.projects[i][field] = val; }
+        function addProject() { currentData.projects.push({ id: Date.now(), title: '', description: '', techStack: '', placeholder: 'New Project' }); renderAdmin(); }
+        function deleteProject(i) { currentData.projects.splice(i, 1); renderAdmin(); }
+
+        function updateBlog(i, field, val) { currentData.blog[i][field] = val; }
+        function addBlogPost() { currentData.blog.push({ id: Date.now(), title: '', date: new Date().toLocaleDateString(), content: '' }); renderAdmin(); }
+        function deleteBlog(i) { currentData.blog.splice(i, 1); renderAdmin(); }
+
+        function updateSkill(i, field, val) { currentData.skills[i][field] = val; }
+        function addSkill() { currentData.skills.push({ name: '', level: 50 }); renderAdmin(); }
+        function deleteSkill(i) { currentData.skills.splice(i, 1); renderAdmin(); }
+
+        function updateAchievement(i, field, val) { currentData.achievements[i][field] = val; }
+        function addAchievement() { currentData.achievements.push({ title: '', description: '', date: '', icon: '🏆' }); renderAdmin(); }
+        function deleteAchievement(i) { currentData.achievements.splice(i, 1); renderAdmin(); }
+
+        function updateCert(i, field, val) { currentData.certifications[i][field] = val; }
+        function addCert() { currentData.certifications.push({ title: '', description: '' }); renderAdmin(); }
+        function deleteCert(i) { currentData.certifications.splice(i, 1); renderAdmin(); }
+
+        async function saveAll() {
+            const msg = document.getElementById('status-msg');
+            msg.innerText = 'Saving...';
+            try {
+                const res = await fetch('/api/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: adminPass, data: currentData })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    msg.innerText = 'All changes saved successfully!';
+                    msg.style.color = '#2ed573';
+                } else {
+                    msg.innerText = 'Error: ' + result.message;
+                    msg.style.color = '#ff4757';
+                }
+            } catch (err) {
+                msg.innerText = 'Error saving changes';
+                msg.style.color = '#ff4757';
+            }
+        }
+    </script>
+</body>
+</html>
