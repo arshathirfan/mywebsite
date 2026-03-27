@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadDynamicContent() {
         try {
             // Add timestamp to prevent caching
-            const response = await fetch('api/data?t=' + Date.now());
+            const response = await fetch('/api/data?t=' + Date.now());
             const data = await response.json();
 
             // Render Projects
