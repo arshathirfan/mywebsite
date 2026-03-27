@@ -27,7 +27,17 @@ const contentSchema = new mongoose.Schema({
 const Content = mongoose.model('Content', contentSchema);
 
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, '/')));
+app.use(express.static(__dirname));
+
+// Serve index.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Serve admin.html
+app.get('/admin.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
 
 // Initialize DB with data.json if empty
 async function initializeDB() {
