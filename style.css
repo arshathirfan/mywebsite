@@ -362,10 +362,12 @@ body {
 
 /* Home Stats Section */
 .home-stats {
-    display: grid;
+    display: grid !important;
     grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
-    margin-top: -1rem;
+    margin-top: 2rem;
+    min-height: 120px;
+    width: 100%;
 }
 
 .stat-card {
