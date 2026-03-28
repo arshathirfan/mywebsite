@@ -7,38 +7,53 @@ const app = express();
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 const MONGODB_URI = process.env.MONGODB_URI;
 
-// Handle MongoDB connection with better error reporting
-let isConnected = false;
+// Connection caching for serverless environments
+let cachedConnection = null;
+
 const connectDB = async () => {
-    if (isConnected) return;
-    if (!MONGODB_URI) {
-        throw new Error('MONGODB_URI is not defined in environment variables');
+    // If we have a connection and it's active, use it
+    if (cachedConnection && mongoose.connection.readyState >= 1) {
+        return cachedConnection;
     }
+
+    if (!MONGODB_URI) {
+        throw new Error('MONGODB_URI is not defined in Vercel environment variables.');
+    }
+
     try {
-        await mongoose.connect(MONGODB_URI);
-        isConnected = true;
+        console.log('Connecting to MongoDB Atlas...');
+        
+        // Cache the connection promise to avoid multiple simultaneous connection attempts
+        cachedConnection = await mongoose.connect(MONGODB_URI, {
+            serverSelectionTimeoutMS: 5000,
+            socketTimeoutMS: 45000,
+        });
+
         console.log('Connected to MongoDB Atlas');
+        return cachedConnection;
     } catch (err) {
         console.error('MongoDB Connection Error:', err.message);
-        throw new Error('Failed to connect to MongoDB: ' + err.message);
+        
+        // Clear the cache so we can try again on the next request
+        cachedConnection = null;
+        
+        if (err.message.includes('Could not connect to any servers')) {
+            throw new Error('Database connection failed. Most common reasons:\n1. Your IP is not whitelisted in MongoDB Atlas (add 0.0.0.0/0).\n2. Your MONGODB_URI password contains special characters that are not URL-encoded.\n3. Your MONGODB_URI is incorrect.\n\nDetails: ' + err.message);
+        }
+        throw new Error('Could not connect to MongoDB: ' + err.message);
     }
 };
 
 app.use(bodyParser.json());
 
-// Add a test "ping" route to verify the API is alive
-app.get('/api/ping', (req, res) => {
-    res.json({ success: true, message: 'API is alive and reachable!' });
-});
-
 // API to get content
 app.get('/api/data', async (req, res) => {
     try {
         await connectDB();
-        const data = await Content.findOne();
+        const data = await Content.findOne().setOptions({ bufferCommands: false });
         res.json(data || { projects: [], blog: [], skills: [], achievements: [], certifications: [] });
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Database error: ' + err.message });
+        res.status(500).json({ success: false, message: err.message });
     }
 });
 
@@ -50,10 +65,10 @@ app.post('/api/save', async (req, res) => {
     }
     try {
         await connectDB();
-        await Content.findOneAndUpdate({}, data, { upsert: true });
+        await Content.findOneAndUpdate({}, data, { upsert: true, bufferCommands: false });
         res.json({ success: true, message: 'Data saved successfully!' });
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Save error: ' + err.message });
+        res.status(500).json({ success: false, message: err.message });
     }
 });
 
