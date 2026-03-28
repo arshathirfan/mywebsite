@@ -63,7 +63,21 @@ app.get('/api/data', async (req, res) => {
     try {
         await connectDB();
         const data = await Content.findOne().setOptions({ bufferCommands: false });
-        res.json(data || { projects: [], blog: [], skills: [], achievements: [], certifications: [] });
+        const defaults = {
+            projects: [],
+            blog: [],
+            skills: [],
+            achievements: [],
+            certifications: [],
+            homeStats: [
+                { value: "1+", label: "Years Experience" },
+                { value: "10+", label: "Projects Completed" },
+                { value: "5+", label: "Certifications" },
+                { value: "UCSC", label: "Undergraduate" }
+            ],
+            techStack: ["Python", "JavaScript", "TensorFlow", "PyTorch", "React", "Node.js", "MongoDB", "SQL"]
+        };
+        res.json(data || defaults);
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
