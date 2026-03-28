@@ -7,7 +7,7 @@ const axios = require('axios');
 const { Resend } = require('resend');
 
 const app = express();
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 const MONGODB_URI = process.env.MONGODB_URI;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
@@ -168,3 +168,11 @@ app.post('/api/contact', async (req, res) => {
 });
 
 module.exports = app;
+app.post('/api/verify', (req, res) => {
+    const { password } = req.body;
+    if (password === ADMIN_PASSWORD) {
+        res.json({ success: true });
+    } else {
+        res.status(401).json({ success: false, message: 'Incorrect password' });
+    }
+});

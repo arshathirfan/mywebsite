@@ -85,12 +85,33 @@
 
         function login() {
             adminPass = document.getElementById('admin-pass').value;
-            fetchData();
+            if (!adminPass) {
+                alert('Please enter a password!');
+                return;
+            }
+            verifyAndFetch();
+        }
+
+        async function verifyAndFetch() {
+            try {
+                const res = await fetch('/api/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: adminPass })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    fetchData();
+                } else {
+                    alert('Incorrect password!');
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
         }
 
         async function fetchData() {
             try {
-                // Add timestamp to prevent caching
                 const res = await fetch('/api/data?t=' + Date.now());
                 const data = await res.json();
 
@@ -104,7 +125,7 @@
                 document.getElementById('admin-content').style.display = 'block';
             } catch (err) {
                 console.error('Fetch error:', err);
-                alert('Connection Error: ' + err.message + '\n\nPlease check if your MONGODB_URI is correct in Vercel settings.');
+                alert('Connection Error: ' + err.message);
             }
         }
 
