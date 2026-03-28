@@ -62,7 +62,8 @@ app.use(bodyParser.json());
 app.get('/api/data', async (req, res) => {
     try {
         await connectDB();
-        const data = await Content.findOne().setOptions({ bufferCommands: false });
+        let data = await Content.findOne().setOptions({ bufferCommands: false });
+        
         const defaults = {
             projects: [],
             blog: [],
@@ -77,7 +78,18 @@ app.get('/api/data', async (req, res) => {
             ],
             techStack: ["Python", "JavaScript", "TensorFlow", "PyTorch", "React", "Node.js", "MongoDB", "SQL"]
         };
-        res.json(data || defaults);
+
+        if (!data) {
+            return res.json(defaults);
+        }
+
+        // Merge with defaults to handle existing documents missing new fields
+        const mergedData = {
+            ...defaults,
+            ...data.toObject()
+        };
+
+        res.json(mergedData);
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
