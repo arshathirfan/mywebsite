@@ -13,7 +13,9 @@ const contentSchema = new mongoose.Schema({
     blog: Array,
     skills: Array,
     achievements: Array,
-    certifications: Array
+    certifications: Array,
+    homeStats: Array,
+    techStack: Array
 });
 
 const Content = mongoose.models.Content || mongoose.model('Content', contentSchema);

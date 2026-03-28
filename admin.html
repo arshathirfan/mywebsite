@@ -32,7 +32,19 @@
     <main class="admin-section" id="admin-content" style="display: none;">
         <h1 class="section-title">Admin Dashboard</h1>
         
-        <section>
+        <section style="margin-top: 3rem;">
+            <h2>Manage Home Stats</h2>
+            <div id="admin-home-stats"></div>
+            <button onclick="addStat()" class="btn-add">+ Add Stat</button>
+        </section>
+
+        <section style="margin-top: 3rem;">
+            <h2>Manage Tech Stack</h2>
+            <div id="admin-tech-stack"></div>
+            <button onclick="addTech()" class="btn-add">+ Add Tech</button>
+        </section>
+
+        <section style="margin-top: 3rem;">
             <h2>Manage Projects</h2>
             <div id="admin-projects"></div>
             <button onclick="addProject()" class="btn-add">+ Add Project</button>
@@ -97,6 +109,26 @@
         }
 
         function renderAdmin() {
+            if (!currentData.homeStats) currentData.homeStats = [];
+            if (!currentData.techStack) currentData.techStack = [];
+
+            const statsDiv = document.getElementById('admin-home-stats');
+            statsDiv.innerHTML = currentData.homeStats.map((s, i) => `
+                <div class="admin-card">
+                    <div class="form-group"><input type="text" value="${s.value}" onchange="updateStat(${i}, 'value', this.value)" placeholder="Value (e.g. 10+)"></div>
+                    <div class="form-group"><input type="text" value="${s.label}" onchange="updateStat(${i}, 'label', this.value)" placeholder="Label (e.g. Projects)"></div>
+                    <button onclick="deleteStat(${i})" class="btn-delete">Delete</button>
+                </div>
+            `).join('');
+
+            const techDiv = document.getElementById('admin-tech-stack');
+            techDiv.innerHTML = currentData.techStack.map((t, i) => `
+                <div class="admin-card" style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" value="${t}" onchange="updateTech(${i}, this.value)" style="flex-grow: 1;">
+                    <button onclick="deleteTech(${i})" class="btn-delete">Delete</button>
+                </div>
+            `).join('');
+
             const projectsDiv = document.getElementById('admin-projects');
             projectsDiv.innerHTML = currentData.projects.map((p, i) => `
                 <div class="admin-card">
@@ -167,6 +199,14 @@
         function updateCert(i, field, val) { currentData.certifications[i][field] = val; }
         function addCert() { currentData.certifications.push({ title: '', description: '' }); renderAdmin(); }
         function deleteCert(i) { currentData.certifications.splice(i, 1); renderAdmin(); }
+
+        function updateStat(i, field, val) { currentData.homeStats[i][field] = val; }
+        function addStat() { currentData.homeStats.push({ value: '', label: '' }); renderAdmin(); }
+        function deleteStat(i) { currentData.homeStats.splice(i, 1); renderAdmin(); }
+
+        function updateTech(i, val) { currentData.techStack[i] = val; }
+        function addTech() { currentData.techStack.push(''); renderAdmin(); }
+        function deleteTech(i) { currentData.techStack.splice(i, 1); renderAdmin(); }
 
         async function saveAll() {
             const msg = document.getElementById('status-msg');

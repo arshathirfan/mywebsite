@@ -3,5 +3,12 @@
   "blog": [],
   "skills": [],
   "achievements": [],
-  "certifications": []
+  "certifications": [],
+  "homeStats": [
+    { "value": "1+", "label": "Years Experience" },
+    { "value": "10+", "label": "Projects Completed" },
+    { "value": "5+", "label": "Certifications" },
+    { "value": "UCSC", "label": "Undergraduate" }
+  ],
+  "techStack": ["Python", "JavaScript", "TensorFlow", "PyTorch", "React", "Node.js", "MongoDB", "SQL"]
 }

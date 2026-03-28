@@ -148,6 +148,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 return; // Stop rendering if there's an error
             }
 
+            // Render Home Stats
+            const statsContainer = document.getElementById('home-stats-container');
+            if (statsContainer && data.homeStats) {
+                statsContainer.innerHTML = data.homeStats.map(stat => `
+                    <div class="stat-card card">
+                        <div class="stat-value">${stat.value}</div>
+                        <div class="stat-label">${stat.label}</div>
+                    </div>
+                `).join('');
+            }
+
+            // Render Tech Stack
+            const techContainer = document.getElementById('tech-stack-container');
+            if (techContainer && data.techStack) {
+                techContainer.innerHTML = data.techStack.map(tech => `
+                    <div class="tech-item">${tech}</div>
+                `).join('');
+            }
+
             // Render Projects
             const projectsContainer = document.getElementById('projects-container');
             if (projectsContainer && data.projects) {
