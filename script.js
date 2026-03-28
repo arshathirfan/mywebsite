@@ -248,5 +248,56 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, { threshold: 0.1 });
 
-    document.querySelectorAll('.card').forEach(card => fadeObserver.observe(card));
+    // --- 7. Contact Form Handling ---
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = contactForm.querySelector('.contact-submit');
+            const originalBtnText = submitBtn.textContent;
+            
+            // Get form data
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const message = document.getElementById('contact-message').value;
+
+
+            
+            // Get reCAPTCHA token
+            const recaptchaResponse = typeof grecaptcha !== 'undefined' ? grecaptcha.getResponse() : '';
+            
+            if (!recaptchaResponse) {
+                alert('Please complete the reCAPTCHA');
+                return;
+            }
+
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, message, recaptchaResponse })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    alert('Message sent successfully! I will get back to you soon.');
+                    contactForm.reset();
+                    if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
+                } else {
+                    alert('Error: ' + (result.message || 'Failed to send message'));
+                }
+            } catch (err) {
+                console.error('Contact form error:', err);
+                alert('An error occurred. Please try again later.');
+            } finally {
+                submitBtn.textContent = originalBtnText;
+                submitBtn.disabled = false;
+            }
+        });
+    }
 });
