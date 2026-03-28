@@ -349,6 +349,76 @@ body {
     font-weight: 700;
 }
 
+/* Home Stats Section */
+.home-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: -1rem;
+}
+
+.stat-card {
+    text-align: center;
+    padding: 1.5rem !important;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent-color);
+    margin-bottom: 0.2rem;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+@media (max-width: 992px) {
+    .home-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .home-stats {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+/* Tech Grid Home */
+.tech-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.tech-item {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(var(--blur-amount));
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: 0.3s;
+}
+
+.tech-item:hover {
+    background: var(--accent-color);
+    color: #000;
+    transform: translateY(-3px);
+    border-color: var(--accent-color);
+}
+
 /* Home Highlights */
 .home-highlights {
     margin-top: 3rem;
