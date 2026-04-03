@@ -186,7 +186,7 @@
                     <div class="form-group"><input type="text" value="${a.title}" onchange="updateAchievement(${i}, 'title', this.value)" placeholder="Title"></div>
                     <div class="form-group"><input type="text" value="${a.description}" onchange="updateAchievement(${i}, 'description', this.value)" placeholder="Description"></div>
                     <div class="form-group"><input type="text" value="${a.date}" onchange="updateAchievement(${i}, 'date', this.value)" placeholder="Date"></div>
-                    <div class="form-group"><input type="text" value="${a.icon}" onchange="updateAchievement(${i}, 'icon', this.value)" placeholder="Icon (Emoji)"></div>
+                    <div class="form-group"><input type="text" value="${a.icon}" onchange="updateAchievement(${i}, 'icon', this.value)" placeholder="Icon (Lucide name, e.g. trophy)"></div>
                     <button onclick="deleteAchievement(${i})" class="btn-delete">Delete</button>
                 </div>
             `).join('');
@@ -214,7 +214,7 @@
         function deleteSkill(i) { currentData.skills.splice(i, 1); renderAdmin(); }
 
         function updateAchievement(i, field, val) { currentData.achievements[i][field] = val; }
-        function addAchievement() { currentData.achievements.push({ title: '', description: '', date: '', icon: '🏆' }); renderAdmin(); }
+        function addAchievement() { currentData.achievements.push({ title: '', description: '', date: '', icon: 'trophy' }); renderAdmin(); }
         function deleteAchievement(i) { currentData.achievements.splice(i, 1); renderAdmin(); }
 
         function updateCert(i, field, val) { currentData.certifications[i][field] = val; }

@@ -209,7 +209,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (achievementsContainer && data.achievements) {
                 achievementsContainer.innerHTML = data.achievements.map(ach => `
                     <div class="card achievement-card">
-                        <div class="icon" style="font-size: 2rem; margin-bottom: 1rem;">${ach.icon}</div>
+                        <div class="icon" style="color: var(--accent-color); margin-bottom: 1rem;">
+                            <i data-lucide="${ach.icon}"></i>
+                        </div>
                         <h3>${ach.title}</h3>
                         <p>${ach.description}</p>
                         <span class="date" style="color: var(--accent-color); font-weight: 700;">${ach.date}</span>
@@ -226,6 +228,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p>${cert.description}</p>
                     </div>
                 `).join('');
+            }
+
+            // Initialize Lucide Icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
             }
 
             // Re-observe new cards for fade-in effect
