@@ -134,9 +134,92 @@ body {
     flex-direction: column;
     align-items: center; /* Center items horizontally */
     z-index: 1500;
-    transition: left var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    transition: left var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1), 
+                top var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: var(--card-shadow);
     overflow-y: auto; /* Allow scroll if needed */
+}
+
+/* Desktop styles for top-appearing dashboard */
+@media (min-width: 769px) {
+    .sidebar {
+        left: 0;
+        top: -110%; /* Hidden above the screen */
+        width: 100%;
+        height: auto;
+        max-height: 90vh; /* Don't cover everything */
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 2.5rem 100px; /* More padding to clear fixed buttons */
+        border-right: none;
+        border-bottom: 1px solid var(--glass-border);
+        border-radius: 0 0 40px 40px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .sidebar.open {
+        top: 0;
+        left: 0;
+    }
+
+    .sidebar-header {
+        flex-direction: row;
+        text-align: left;
+        margin-bottom: 0;
+        width: auto;
+        gap: 1.5rem;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-areas: 
+            "img name"
+            "img title";
+        align-items: center;
+    }
+
+    .profile-container { grid-area: img; }
+    .sidebar-header h3 { 
+        grid-area: name; 
+        text-align: left; 
+        margin-bottom: 0; 
+        font-size: 1.2rem; 
+    }
+    .sidebar-header p { 
+        grid-area: title; 
+        text-align: left; 
+        font-size: 0.8rem; 
+    }
+
+    .profile-img-container {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 0;
+    }
+
+    .nav-links {
+        display: flex;
+        flex-direction: row;
+        margin-top: 0;
+        gap: 0.5rem;
+        width: auto;
+        justify-content: center;
+        flex-grow: 0;
+    }
+
+    .nav-links a {
+        padding: 0.6rem 1.2rem;
+        margin-bottom: 0;
+    }
+
+    .sidebar-footer {
+        width: auto;
+        margin-top: 0;
+        padding-top: 0;
+    }
+
+    .close-sidebar-btn {
+        display: none; /* Menu button toggles it */
+    }
 }
 
 /* Hide scrollbar for sidebar */
