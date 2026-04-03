@@ -1,24 +1,15 @@
-/* Root Variables for Liquid Glass Theme */
+/* Root Variables for Liquid Glass Theme (Dark Mode Only) */
 :root {
-    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --glass-bg: rgba(255, 255, 255, 0.12);
-    --glass-border: rgba(255, 255, 255, 0.18);
-    --text-primary: #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.75);
-    --accent-color: #00d2ff;
-    --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.3);
-    --blur-amount: 12px;
-    --sidebar-width: 280px;
-    --transition-speed: 0.4s;
-}
-
-.dark-theme {
     --bg-gradient: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
     --glass-bg: rgba(0, 0, 0, 0.3);
     --glass-border: rgba(255, 255, 255, 0.08);
     --text-primary: #f5f6fa;
     --text-secondary: rgba(245, 246, 250, 0.7);
     --accent-color: #74b9ff;
+    --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.3);
+    --blur-amount: 12px;
+    --sidebar-width: 280px;
+    --transition-speed: 0.4s;
 }
 
 /* Global Styles */
@@ -163,46 +154,6 @@ body {
     border: 3px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
-
-.theme-btn-fixed {
-    position: fixed;
-    top: 25px;
-    right: 25px;
-    width: 42px;
-    height: 42px;
-    background: var(--glass-bg);
-    backdrop-filter: blur(var(--blur-amount));
-    -webkit-backdrop-filter: blur(var(--blur-amount));
-    border: 1px solid var(--glass-border);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 2000;
-    box-shadow: var(--card-shadow);
-    transition: 0.3s;
-    color: white;
-    padding: 0;
-}
-
-.theme-btn-fixed:hover {
-    transform: scale(1.1);
-    background: rgba(255, 255, 255, 0.2);
-    border-color: var(--accent-color);
-}
-
-.theme-btn-fixed svg {
-    width: 20px;
-    height: 20px;
-}
-
-/* Toggle visibility based on theme */
-.sun-icon { display: none; }
-.moon-icon { display: block; }
-
-.dark-theme .sun-icon { display: block; }
-.dark-theme .moon-icon { display: none; }
 
 .profile-img { width: 100%; height: 100%; object-fit: cover; }
 
