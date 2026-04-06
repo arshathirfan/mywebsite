@@ -32,7 +32,43 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeSidebar);
     if (overlay) overlay.addEventListener('click', closeSidebar);
 
-    // --- 2. Page Switching Logic ---
+    // --- 2. Page Switching & Scroll Logic ---
+    function updateScrollProgress() {
+        const progressBar = document.getElementById('scroll-progress');
+        if (progressBar) {
+            const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            progressBar.style.width = scrolled + "%";
+        }
+    }
+
+    // Scroll Spy for Active Sidebar Links
+    function scrollSpy() {
+        let currentSection = "";
+        sections.forEach((section) => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            if (window.scrollY >= sectionTop - 150) {
+                currentSection = section.getAttribute("id");
+            }
+        });
+
+        if (currentSection) {
+            navLinks.forEach((link) => {
+                link.classList.remove("active");
+                if (link.getAttribute("href").includes(currentSection)) {
+                    link.classList.add("active");
+                }
+            });
+        }
+    }
+
+    window.addEventListener('scroll', () => {
+        updateScrollProgress();
+        scrollSpy();
+    });
+
     function showSection(targetId) {
         // Remove active class from all sections and hide them
         sections.forEach(section => {
@@ -256,6 +292,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { threshold: 0.1 });
 
     // --- 7. Contact Form Handling ---
+    function showToast(message, type = 'info') {
+        let container = document.querySelector('.toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+        }
+
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<span>${message}</span>`;
+        container.appendChild(toast);
+
+        // Trigger show
+        setTimeout(() => toast.classList.add('show'), 10);
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400);
+        }, 3000);
+    }
+
     const contactForm = document.getElementById('contact-form');
     if (contactForm) {
         contactForm.addEventListener('submit', async (e) => {
@@ -275,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const recaptchaResponse = typeof grecaptcha !== 'undefined' ? grecaptcha.getResponse() : '';
             
             if (!recaptchaResponse) {
-                alert('Please complete the reCAPTCHA');
+                showToast('Please complete the reCAPTCHA', 'info');
                 return;
             }
 
@@ -292,15 +351,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
 
                 if (response.ok && result.success) {
-                    alert('Message sent successfully! I will get back to you soon.');
+                    showToast('Message sent successfully!', 'success');
                     contactForm.reset();
                     if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
                 } else {
-                    alert('Error: ' + (result.message || 'Failed to send message'));
+                    showToast('Error: ' + (result.message || 'Failed to send message'), 'error');
                 }
             } catch (err) {
                 console.error('Contact form error:', err);
-                alert('An error occurred. Please try again later.');
+                showToast('An error occurred. Please try again later.', 'error');
             } finally {
                 submitBtn.textContent = originalBtnText;
                 submitBtn.disabled = false;
